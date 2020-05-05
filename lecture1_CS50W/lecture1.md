@@ -28,6 +28,6 @@ Table of Content
 
 TODO:
 - [ ] Add git notes!
-- [ ]
-- [ ]
+- [ ] Upload Notes to github
+- [ ] 
 - [ ]
