@@ -1,0 +1,3 @@
+[submodule "lecture0_CS50W"]
+	path = lecture0_CS50W
+	url = git@github.com:robifis/lecture0_CS50W.git
