@@ -39,7 +39,7 @@ If we add `padding: 5px` on the other hand then it will affect the inside of the
 
 ### Pseudo 
 #### Pseudo Class
-Here is a[link](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes) for more info
+Here is a [link](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes) for more info
 A pseudo class is a special state of an element. Things like `button:hover` or `a:active` are pseudo classes.
 
 #### Pseudo Elements
