@@ -4,7 +4,6 @@
 [edX link](https://courses.edx.org/courses/course-v1:HarvardX+CS50W+Web/course/)
 [YouTube Link](https://www.youtube.com/playlist?list=PLhQjrBD2T380xvFSUmToMMzERZ3qB5Ueu)
 
-## Lectures
 ### Lecture 0
 - [Lecture 0](lecture0_CS50W/lecture0%20-%20Git.md) **HTML and CSS**
   - [YouTube Link](https://www.youtube.com/watch?v=MLYwcHppSH8&list=PLhQjrBD2T380xvFSUmToMMzERZ3qB5Ueu&index=3&t=4057s)
