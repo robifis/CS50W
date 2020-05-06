@@ -1,4 +1,23 @@
 # Harvard CS50W Notes
+- [Harvard CS50W Notes](#harvard-cs50w-notes)
+  - [Git and GitHub](#git-and-github)
+    - [What is Git?](#what-is-git)
+    - [Basic git commands](#basic-git-commands)
+      - [git clone](#git-clone)
+      - [git add](#git-add)
+      - [git commit -m "Message"](#git-commit--m-%22message%22)
+      - [git push](#git-push)
+    - [Merging conflicts](#merging-conflicts)
+    - [Extra commands](#extra-commands)
+      - [git log](#git-log)
+      - [git reset](#git-reset)
+  - [Advanced Git Commands](#advanced-git-commands)
+    - [Git Branch](#git-branch)
+    - [Git Checkout](#git-checkout)
+    - [Git Merge](#git-merge)
+    - [Git Pull](#git-pull)
+    - [Forks](#forks)
+    - [Pull Requests](#pull-requests)
 
 ## Git and GitHub
 
@@ -56,11 +75,32 @@ git reset --hard origin/master
 The first command allows you to go back to a previous version. The commit is the hash file that you will find when you run the `git log` command.
 The second command will return your code back to the version when you downloaded it of the GitHub repo website. 
 
-## CSS
-### Margin and padding
-There are two ways to add margin and padding to an element.
+## Advanced Git Commands
 
-The first one is `margin : 5px`. This will add space to the outside of the "box" of the element, not affecting anything on the inside.
-If we add `padding: 5px` on the other hand then it will affect the inside of the box of the element, spacing items away from the border of the box. 
+### Git Branch
+`git branch` is a command that's used split off code from the working master code. This is typically done in order to work on a new feature without affecting the master branch of the code. This is helpful in order to avoid bugs in the main code as well as to be able to test new features on a separate website, for example.
+Using the command will list all the current branches that are available. 
+
+`git branch name` will add a branch. The code will not be visible on GitHub unless you push it!
+
+`HEAD` in git means that it is the current branch that is being worked on. Whatever repository we were to pull down (feature branch or master) would be the head.
+
+### Git Checkout
+`git checkout` is the command that is used to switch between branches. Using `git checkout name` will switch to the branch with a specific name. `git checkout master` will switch back to the master branch.
+Switching branches will change the file that is being worked on to the most up to date one on the particular branch! 
+
+### Git Merge 
+`git merge` is a command in order to merge a branch to the master. `git merge name` is the full command, where name is the name of the branch you want to merge into the master.
+
+### Git Pull
+`git pull` combines both `git fetch` and `git merge origin/master` into one command. It updates the repo on your machine to the the version that's currently stored on GitHub!
+
+### Forks 
+Forking a project won't affect the original repo on GiHub but it allows you to work on the project yourself. This is commonly used in open source projects. 
+
+### Pull Requests
+A pull request brings in changes from the your repo into another repo. Pull requests are a great way to get feedback about your code. Remember that a pull request won't automatically merge your code with the project, but it will go into a review stage where the code will be examined by the other developer. 
+It's a very visual way to see your changes vs the project you have forked. 
+
 
 
