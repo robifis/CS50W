@@ -11,6 +11,7 @@ The other thing that is unique to Django is that we can create separate "apps" w
 3. [Creating our first View](#create_links)  
 3a. [Links](#links)  
 3b. [Views](#views)
+4. [Variables](#variables)
 
 **Best Practices:**
 - [Template Inheritance](#template_inheritance)
@@ -55,7 +56,7 @@ This only needs to be done for each new app created! We do not need to do this f
 
 Now that we've set up the project folder we need to create our first view in order to display something to our user when they come to the url. 
 
-<a> name="links">Links</a>
+#### <a name="links">Links</a>
 First, we need to create a new file inside of the app folder called `urls.py`. This is important so that our app can link to individual routes within the app. 
 The `urls.py` file needs to look as follows:
 
@@ -78,7 +79,7 @@ This is our first view, which links to the function called index inside of the v
 **index** => is the name of the function.   
 **name='index'** makes it easier to link between files later.   
 
-<a> name="views">Views</a>
+#### <a name="views">Views</a>
 We also need to create a new view(function) inside of the `views.py` file in the app folder. There is no difference if you create a link first or the view. The names have to match! 
 
 This is what a function looks like:
@@ -87,17 +88,78 @@ def index(request):
     return render(request, 'app_name/index.html')
 ```
 This is the simplest function that returns the index.html page from inside of the `app_name/templates/app_name/` folder. Here we store all our html files. 
+
+The function name(`def index`) must match the name inside of the `urls.py` file that we have created.
+So `def index` must match `views.index`. We are essentially telling urls.py to render what's inside of the `views.py` file. 
+More specifically inside of the index function. 
+
 We only need to specify any additional folders beyond the `templates` folder in our path. We don't need to specify templates! This helps to avoid naming conflicts!
 
-**Optional**
+**Optional**  
 We can create a base template that inherits the html that doesn't change(navbar, head, etc...). 
 See [template inheritance](#template_inheritance) to read more.
 
+### <a name="variables">Variables</a>
 
+Any modern website these days needs to be able to display dynamic content with the help of variables.
+In django, variables are passed down via a dictionary. 
 
+Example:
+```
+def sampleFunction(request, variable):
+    return render(request, 'app_name/sampleFunction.html, {
+        'variable': variable
+    })
+```
+
+The "key" of the dictionary is the name of the variable that the HTML file will have access to.
+The value is the value from the python code. 
+This allows us to render and pass information to the HTML file from Python. 
 
 
 #### <a name="template_inheritance">Template Inheritance</a>
-### <a name=""></a>
-### <a name=""></a>
-### <a name=""></a>
+Template inheritance is a best practice when it comes to creating websites in Django. 
+We could easily render each HTML file manually but Django allows us to only only render the parts that we need in order to reuse code.
+
+**How To:**  
+We first need to create a base html file inside of the `app_name/templates/app_name` folder. 
+This follows a typical naming patter which is either `base.html` or `layout.html`.
+
+This file contains all the static data that won't change from page to page. 
+It may contain things like the navbar, a link to our CSS stylesheet, a link to our Javascript files etc.
+
+```
+<html>
+    <head>
+        {% load static %}
+        <title>Website Title</title>
+        <link rel="stylesheet href="{% static '/app_name/style.css' %}">
+    </head>
+    <body>
+        <nav>
+            <li><a href="{% url 'index' %}">Home</li>
+            <li><a href="{% url 'about' %}">About</li>
+            <li><a href="{% url 'contact' %}">Contact</li>
+        </nav>
+        {% block body %}
+        {% endblock %}
+    </body>
+</html>
+```
+This is what a basic layout page would look like (base.html or layout.html).
+We can see a couple of differences in here though. We have a {% load static %} file (more on using static files [here](#static_files)).
+
+Links are also handled slightly differently in Django vs normal HTML. More on links[here](#url_links)
+
+The other difference is the 
+
+#### <a name="static_files">Static Files (CSS, etc...)</a>
+```
+{% load static %}
+<link rel="stylesheet href="{% static '/app_name/style.css' %}">
+```
+#### <a name="url_links">Urls in Django</a>
+```
+<li><a href="{% url 'index' %}">Home</li>
+```
+
