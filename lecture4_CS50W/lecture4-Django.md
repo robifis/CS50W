@@ -15,6 +15,10 @@ The other thing that is unique to Django is that we can create separate "apps" w
 
 **Best Practices:**
 - [Template Inheritance](#template_inheritance)
+- [Static Files](#static_files)  
+- [Urls in Django](#url_links)  
+- [Sessions](#sessions)
+  
 
 ### <a name="Create_App">Creating a new Django project + Initial Setup</a> 
 We first need to create the django app by running the command `django-admin startproject Project_Name`. 
@@ -64,7 +68,7 @@ The `urls.py` file needs to look as follows:
 from django.urls import path # Similar to the urls.py file inside of the project file
 from . import views # This imports the views.py file from the app folder (hence the .)
 
-# Adding this above the urlpatterns patterns varibale will help django 
+# Adding this above the urlpatterns patterns variable will help django 
 # link back to the function in order (in case there are naming conflicts)
 
 app_name = 'app_name'
@@ -149,17 +153,65 @@ It may contain things like the navbar, a link to our CSS stylesheet, a link to o
 This is what a basic layout page would look like (base.html or layout.html).
 We can see a couple of differences in here though. We have a {% load static %} file (more on using static files [here](#static_files)).
 
-Links are also handled slightly differently in Django vs normal HTML. More on links[here](#url_links)
+Links are also handled slightly differently in Django vs normal HTML. 
+More on links[here](#url_links).
 
-The other difference is the 
+**Dynamic Content**  
+Dynamic content is displayed via blocks in Django (block body - endblock).
+This block tells django that we only want it to render what's inside of that part from other websites.
+
+Here is what the `index.html` (for example) home page would look like:
+```
+{% extends 'base.html' %}
+
+{% block body %}
+    Dyanamic HTML content goes here! 
+{% endblock %}
+```
+This design makes for much cleaner code which is much more reusable!
+All we did was tell Django what file we would like to extend (base.html) and then we just added everything we wanted to be different inside of the `{% block body  %} {% endblock %}` sections. 
+
+We don't have to call it "body" we can call it anything we want. Especially useful if we want different areas with dynamic content.
 
 #### <a name="static_files">Static Files (CSS, etc...)</a>
+Loading static files is slightly different inside of a Django app when compared to normal html.
+Static files, similar to HTML files are kept inside of the app_name/static/app_name folder. 
+Again, because we write {% load static %} at the top of the page, Django knows to look inside of the static folder of the app.
+We then need to specify any path inside of that static folder. 
+It is helpful to create a folder inside of the static folder in order to avoid naming clashes!
+
+Here is an example of loading `styles.css` from inside of the static folder:
+
 ```
 {% load static %}
 <link rel="stylesheet href="{% static '/app_name/style.css' %}">
 ```
-#### <a name="url_links">Urls in Django</a>
-```
-<li><a href="{% url 'index' %}">Home</li>
-```
+We just need to make sure we specify `static` at the beginning before we link the file!
 
+#### <a name="url_links">Urls in Django</a>
+Django is powerful enough to allow us to create dynamic links to websites within our app. This has many benefits.
+In order to create this we write the following code inside oft he href part:
+```
+<li><a href="{% url 'app_name:index' %}">Home</li>
+```
+Here 'url' simply tells django that we want go to the url path that has `name='index'` in it. This is why we add
+names to paths inside of the `urls.py` file inside of the app directory!
+To avoid issues with the url function we can prepend the name with the name we have defined inside of the `urls.py` file
+inside of the app folder: `app_name:index`. This helps Django guide us to the correct url, in case there are other functions with the same name!
+
+#### <a name="sessions">Sessions</a>
+
+Sessions in Django allow us to create individual session for individual users. Django already stores a secure key for us so we don't have to worry about the security. It helps with validation too. 
+
+#### <a name="redirect">Redirects</a>
+
+Django also allows to create redirects and reverse engineer a url. This is particularly useful if we want to direct a user to a specific page after they've either filled out a form or logged in.
+
+Inside of the `views.py` file we need to import the following:
+```
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
+return HttpResponseRedirect(reverse('app_name:index))
+```
+This can be added to any function where we want the redirect to apply. Note that we're still using the same convetion as described in the [Urls in Django](#url_links) section by adding the app name before the function. Again, this is to avoid naming conflicts!
