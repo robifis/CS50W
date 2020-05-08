@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'todo_app' # => This is the name of the app as we have created it. It needs to be added in here and for every subsequent app!
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
