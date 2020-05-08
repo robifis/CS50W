@@ -1,5 +1,4 @@
-"""
-cs50 URL Configuration
+"""todo URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -15,14 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('hello/', include('hello.urls')) 
 ]
-
-"""
-This tells the django project that if we type url.com/hello into the address bar that
-we want it to include everything inside of the urls.py file that's inside of that file.
-"""
