@@ -8,12 +8,12 @@ The other thing that is unique to Django is that we can create separate "apps" w
 **How To:**
 1. [Creating a new Django project + Initial Setup](#Create_App)
 2. [Creating a new App](#new_app)
-3. [Creating our first View](#create_links)
-3a. [Links](#links)
+3. [Creating our first View](#create_links)  
+3a. [Links](#links)  
 3b. [Views](#views)
 
 **Best Practices:**
-[Template Inheritance](#template_inheritance)
+- [Template Inheritance](#template_inheritance)
 
 ### <a name="Create_App">Creating a new Django project + Initial Setup</a> 
 We first need to create the django app by running the command `django-admin startproject Project_Name`. 
