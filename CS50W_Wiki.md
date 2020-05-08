@@ -14,7 +14,7 @@
   - [YouTube Link](https://www.youtube.com/watch?v=xOgOKEXzlOg&list=PLhQjrBD2T380xvFSUmToMMzERZ3qB5Ueu&index=5&t=905s)
 
 ## Lecture 3 - Django
-- [Lecture 3]()
+- [Lecture 3](lecture4_CS50W/lecture4-Django.md)
   - [YouTube Link](https://www.youtube.com/watch?v=SeJIm7QkU7I&list=PLhQjrBD2T380xvFSUmToMMzERZ3qB5Ueu&index=6&t=0s)
 
 #### Links
