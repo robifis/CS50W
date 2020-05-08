@@ -72,11 +72,11 @@ urlpatterns =[
 ] 
 
 ```
-This is our first view, which links to the function called index inside of the views.py file!
-**""** => This is our "root" url. So if the user visits just www.url.com/app_name/
-**views.** => is the name of the file (views.py)
-**index** => is the name of the function. 
-**name='index'** makes it easier to link between files later. 
+This is our first view, which links to the function called index inside of the views.py file!  
+**""** => This is our "root" url. So if the user visits just www.url.com/app_name/  
+**views.** => is the name of the file (views.py)  
+**index** => is the name of the function.   
+**name='index'** makes it easier to link between files later.   
 
 <a> name="views">Views</a>
 We also need to create a new view(function) inside of the `views.py` file in the app folder. There is no difference if you create a link first or the view. The names have to match! 
