@@ -18,7 +18,7 @@ The other thing that is unique to Django is that we can create separate "apps" w
 - [Static Files](#static_files)  
 - [Urls in Django](#url_links)  
 - [Sessions](#sessions)
-  
+- [Redirects](#redirect)  
 
 ### <a name="Create_App">Creating a new Django project + Initial Setup</a> 
 We first need to create the django app by running the command `django-admin startproject Project_Name`. 
