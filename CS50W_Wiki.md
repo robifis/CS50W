@@ -1,4 +1,4 @@
-# This is the Wiki for the CS50W Wiki
+# This is the Wiki for the CS50W Course
 
 ## Lecture 1 - GIT
 - [Lecture 1](lecture0_CS50W/lecture0%20-%20Git.md)
