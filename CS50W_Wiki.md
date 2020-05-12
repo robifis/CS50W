@@ -9,8 +9,8 @@
 - [YouTube Link](https://www.youtube.com/watch?v=MLYwcHppSH8&list=PLhQjrBD2T380xvFSUmToMMzERZ3qB5Ueu&index=3&t=4057s)
   
 ## Lecture 3 - Python
-- [Lecture 2](lecture3_CS50W/lecture3-Python.md)
-- [Lecture 2 Python File](lecture3_CS50W/lecture3.py)
+- [Lecture 3](lecture3_CS50W/lecture3-Python.md)
+- [Lecture 3 Python File](lecture3_CS50W/lecture3.py)
 - [YouTube Link](https://www.youtube.com/watch?v=xOgOKEXzlOg&list=PLhQjrBD2T380xvFSUmToMMzERZ3qB5Ueu&index=5&t=905s)
 
 ## Lecture 4 - Django
