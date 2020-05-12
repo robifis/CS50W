@@ -23,6 +23,14 @@
     - [Migrations](#migrations)
     - [Inserting Data](#inserting-data)
     - [Creating Flights](#creating-flights)
+  - [Building a web application](#building-a-web-application)
+    - [Accessing Airports](#accessing-airports)
+    - [Creating new flights](#creating-new-flights)
+  - [Django Admins App](#django-admins-app)
+    - [Registering the models](#registering-the-models)
+    - [Accessing individual flights (via ID)](#accessing-individual-flights-via-id)
+      - [Dynamic url paths](#dynamic-url-paths)
+      - [Displaying the data dynamically](#displaying-the-data-dynamically)
 
 ## Introduction
 
@@ -365,4 +373,137 @@ lhr.arrivals.all()
 ```
 This will now show us all the arrivals into that particular airport!
 
-Continue at 1:04:16
+## Building a web application
+
+Django and SQL work together in order for us to be able to use "normal" python code and interact with the classes, instead of having to remember all the sql syntax and commands.
+We can now, effectively create a view in our app and, as it is in our case, display all the flights. 
+
+A sample `views.py` function could look like this:
+```
+from django.shortcuts import render 
+from .models import Flight # Here we are importing our Flight Database
+
+def index(request):
+  return render(request, 'flights/index.html', {
+    'flights`: Flight.objects.all()
+  })
+```
+We first import the Flight class from .models in order to have access to it. 
+
+We then create our function, as normal, and point it to our html file inside of the `app_name/templates/flights/` folder. 
+We can then pass in all of the flights to the html file via our 'flights' key (where the value is `Flights.object.all()`)
+This essentially gives us access to everything we've created above! 
+
+We can then loop over the variable (flights in our case) as normal from within the HTML file. 
+We have access to everything from inside of the class so:
+- flight.id
+- flight.origin
+- flight.destination
+
+This is how we would display the data in a html file dynamically. 
+
+### Accessing Airports
+We can access individual items from within a dataset via specific sql commands.
+The commands are as follows:
+If we want all of the Airports stored we can do:
+- `Airport.objects.filter(city='New York')` => This will list all of the airports that have city set as 'New York'
+- `Airport.objects.filter(city='New York').first()` => This will only display the first in the list of items that I have searched for. 
+- `Airport.objects.get(city='New York')` => This will only return me one item. It's useful to use this if we know that there is only one item in the list with that name. 
+
+### Creating new flights
+We can now create new flights by storing the airport names in variables and then creating a new Flight by storing it in our Class via the airports.
+We can do:
+```
+jfk = Airport.objects.get(city='New York')
+cdg = Airport.objects.get(city='Paris')
+
+f = Flight(origin=jfk, destination=cdg, duration=435)
+f.save()
+```
+We have stored both airports in a variable and then created a new instance of the class by using the Airport Objects in order to create a new flight from New York to Paris. 
+
+This will now automatically, and dynamically, update our html and display the new flight in our list. 
+
+## Django Admins App
+Because manipulating, adding and creating data and databases is that common within Django, Django actually has an app that already allows us to do that stuff with its built in models. 
+
+If we look inside of the project directory, inside of the `urls.py` file, we see that there is a path already there, called admin. 
+To access it, we first need to create a superuser via the command:
+`python manage.py createsuperuser`
+This will then ask us to create a username, email and a password. 
+
+### Registering the models
+
+Once we have set up our superuser, we need to register our models so that our admin can access them.
+
+Inside our `admin.py` file of our app, we need to write the following:
+
+```
+from django.contrib import admin (this is here by default)
+
+from .models import Flight, Airport (we need to add this)
+
+# Register your models here.
+admin.site.register(Airport)
+admin.site.register(Flight)
+```
+
+This will now all our Admin to access the classes created [earlier](#inserting-data).
+
+We can now access the admin interface by going to:
+`localhost:8000/admin`
+This will prompt us for a login and we need to use the credentials that we have set up [here](#django-admins-app)
+
+Once we're in here, we can manipulate(add, edit, delete) our data from inside of the admin interface, without having to do it like we did [here](#creating-new-flights)
+
+Django is clever in the sense that when it comes to creating a new flight, for example, it will list all the airports in a dropdown menu for us, so we don't have type it in manually every time. It displays the same fields that we have created inside of our classes, such as Origin, Destination and Duration. 
+This makes data entry a lot easier. 
+
+### Accessing individual flights (via ID)
+
+Django gives us the ability, via dynamic urls, to access specific data based on the id of the item. In our case, we want to access a particular flight via the id. 
+
+#### Dynamic url paths
+To do this, we need to create a dynamic path inside of our `urls.py` file within our app. 
+
+```
+urlpatterns = [
+    path('', views.index, name='index')
+    path('<int:flight_id>', views.flight, name='flight')
+]
+```
+The second path is the dynamic url, which will allow us to access each flight by their own individual flight_id's.
+
+We now, of course, need to create the flight function, inside of the `views.py` file (views.flight)
+```
+def flight (request, flight_id):
+  flight = Flight.objects.get(id=flight_id)
+  return render(request, 'flights/flight.html`, {
+    'flight': flight
+  })
+```
+The code above will do the following:
+First it will get the flight with the specific id that we have told it to search and store it in the variable called 'flight'. It will then render get the specific html file (flight.html). We also pass it a dictionary into the html via the `flight`:flight parameter. We're passing it the data that's stored in the variable
+`flight=Flight.objects.get(id=flight_id)`
+This variable contains all the data from the flight, meaning we can get the origin, the destination and the duration of the flight. 
+
+#### Displaying the data dynamically
+
+We can then display all of this data inside of the html:
+```
+{% extends 'flights/layout.html %}
+
+{% block body %}
+  <h1>Flight {{ flight.id }}</h1>
+
+  <ul>
+    <li>Origin: {{ flight.origin }}</li>
+    <li>Destination: {{ flight.destination }}</li>
+    <li>Duration: {{ flight.duration }}</li>
+  </ul>
+
+{% endblock %}
+```
+This is how we would display the content of each flight individually via a dynamic page. We don't need to create a new page for each flight. We will just let Django create it for us dynamically! 
+
+Cont: 1:18:36
