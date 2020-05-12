@@ -31,6 +31,11 @@
     - [Accessing individual flights (via ID)](#accessing-individual-flights-via-id)
       - [Dynamic url paths](#dynamic-url-paths)
       - [Displaying the data dynamically](#displaying-the-data-dynamically)
+    - [Adding Passengers](#adding-passengers)
+    - [Displaying Passengers for a Particular Flight](#displaying-passengers-for-a-particular-flight)
+      - [Dynamic Links in Django](#dynamic-links-in-django)
+    - [Passenger Booking System](#passenger-booking-system)
+      - [Passenger Booking Form](#passenger-booking-form)
 
 ## Introduction
 
@@ -506,4 +511,161 @@ We can then display all of this data inside of the html:
 ```
 This is how we would display the content of each flight individually via a dynamic page. We don't need to create a new page for each flight. We will just let Django create it for us dynamically! 
 
-Cont: 1:18:36
+### Adding Passengers
+
+First, we need to create another Model for our passengers.
+For that, we need to add the class to our models.py file with passenger attributes.
+
+```
+class Passenger(models.Model):
+  first = models.CharField(max_length=64)
+  last = models.CharField(max_length=64)
+  flights = models.ManyToManyField(Flight, blank=True, related_name='passengers')
+
+  def __str__(self):
+    return f"{self.first} {self.last}
+```
+
+So here we have created new Class to create passengers. We can also assign a field to them that's `models.ManyToManyField` where we add the Flight list (meaning that they can be on multiple flights,), `blank=True` means that they might not have a flight associated with them and then finally we add `related_name = passengers` so we can query that if we only have a destination, for example and we wanted to see who is going there.
+
+Lastly, after every group that we create we need to apply those changes:
+```
+1. python manage.py makemigrations
+2. python manage.py migrate
+```
+This will commit all the changes. 
+
+We will still have to register our models in the `admin.py` file, like [here](#registering-the-models)
+
+```
+from django.contrib import admin (this is here by default)
+
+from .models import Flight, Airport, Passenger (we need to add this)
+
+# Register your models here.
+admin.site.register(Airport)
+admin.site.register(Flight)
+admin.site.register(Passenger)
+```
+
+This will give us access to the Passengers list from within the admin page!
+
+### Displaying Passengers for a Particular Flight
+
+We can display all the passengers on any given flight they're associated with by adding them dynamically to the flight function, inside our `views.py` file:
+```
+def flight (request, flight_id):
+  flight = Flight.objects.get(id=flight_id)
+  passenger - flight.passengers.all()
+  return render(request, 'flights/flight.html`, {
+    'flight': flight,
+    'passengers: passengers
+  })
+```
+flight.passengers.all() => passengers is the related name we have given it! That's what gives us access to all the passengers! 
+
+So we're essentially accessing the flight variable and via dot notation `flights.passengers.all()`. Hence why we pass in related names! 
+However, we only have access to the flights for THAT particular flight with that particular id. 
+
+Our flight.html would look like this:
+```
+{% extends 'flights/layout.html %}
+
+{% block body %}
+  <h1>Flight {{ flight.id }}</h1>
+
+  <ul>
+    <li>Origin: {{ flight.origin }}</li>
+    <li>Destination: {{ flight.destination }}</li>
+    <li>Duration: {{ flight.duration }}</li>
+  </ul>
+
+  <h2>Passenger List</h2>
+
+  <ul>
+    {% for passenger in passengers %}
+      <li>{{ passenger }} </li>
+    {% empty %}
+      <li>No Passengers</li>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'index %}">Back to Flight List</a>
+
+{% endblock %}
+```
+
+This will now dynamically show each passenger who is on that particular flight. 
+
+#### Dynamic Links in Django
+
+As we've seen before with Django, we can link to a particular page via the {% url 'functionName %}
+
+Inside of the `index.html` file we can also add links to each flight and we can create them dynamically:
+
+```
+<a href="{% url 'flight' flight.id %}">
+  Flight{{ flight.id }}: {{ flight.origin }} to {{  flight.destination }}
+</a>
+```
+
+This will allow me to link to a specific flight when I click on it, based on it's flight id. This is also how you create dynamic links.
+
+
+### Passenger Booking System
+
+We are now in a position to be able to create a route that will allow me to book passengers onto a flight. 
+We first need to create a route inside of our app/urls.py file:
+```
+urlpatterns = [
+  path(""),views.index, name="index"),
+  path("/<int:flight_id>"),views.flight, name="flight"),
+  path("/<int:flight_id>/book"),views.book, name="book"),
+]
+```
+
+Then we need to create the book function. 
+Remember, if we want to submit data, we need to make sure it is done so via a POST method. 
+
+```
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
+def book(request, flight_id):
+  if request.method == 'POST':
+    flight = Flight.objects.get(pk=flight_id)
+    passenger = 
+    Passenger.objects.get(pk=int(request.POST['passenger']))
+    passenger.flights.add(flight)
+
+    return HttpResponseRedirect(reverse("flight", args=(flight.id, )))
+```
+`request.POST['passenger']` => This means that the data that will be passed into the form (POSTED) will come from a field with the name "passenger". The name on any input field is the name we will get.
+NOTE: We need to convert it to an integer, as that's what the passenger ID will be. 
+We are storing the passenger inside of the variable that we have got from the from the booking form (We are booking an existing passenger onto a flight, not creating a new one!) 
+
+We are then adding the passenger to the flight object via `passenger.flights.add(flight)`
+Finally, we are redirecting the user back to the flight page with that particular flight id. 
+
+#### Passenger Booking Form
+
+It's now time to create the form but first we need to add another line inside of the flight function, inside of `views.py` to be able to only book passengers onto the the flight which aren't on the flight already.
+
+We need to add this variable of our flight function
+```
+"non_passengers: Passengers.objects.exclude(flights=flight).all()
+```
+Essentially, this variable will show me all the passengers that aren't on that particular flight. 
+
+Inside of the `flight.html` file we can create a dropdown menu for all the passengers that aren't already on the flight.
+```
+<form action="{% url 'book' flight.id %}" method="post">
+{% csrf_token %}
+<select name="passenger">
+
+</form>
+```
+
+Here we need to make sure we pass it the method of post and we also need to name the dropdown passenger, the same as what we've used inside of the book function `request.POST["passenger"]` so that the system knows where the name is coming from.
+
+Cont at 1:34:42
