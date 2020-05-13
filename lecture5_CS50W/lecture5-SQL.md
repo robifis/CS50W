@@ -36,6 +36,11 @@
       - [Dynamic Links in Django](#dynamic-links-in-django)
     - [Passenger Booking System](#passenger-booking-system)
       - [Passenger Booking Form](#passenger-booking-form)
+        - [Adding non-passengers](#adding-non-passengers)
+    - [Customizing the Admin Page](#customizing-the-admin-page)
+    - [User Login System](#user-login-system)
+      - [Login](#login)
+      - [Logout](#logout)
 
 ## Introduction
 
@@ -631,6 +636,8 @@ Remember, if we want to submit data, we need to make sure it is done so via a PO
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+from .models import Flight, Passenger # important to import the models!
+
 def book(request, flight_id):
   if request.method == 'POST':
     flight = Flight.objects.get(pk=flight_id)
@@ -658,14 +665,149 @@ We need to add this variable of our flight function
 Essentially, this variable will show me all the passengers that aren't on that particular flight. 
 
 Inside of the `flight.html` file we can create a dropdown menu for all the passengers that aren't already on the flight.
+
+##### Adding non-passengers
 ```
 <form action="{% url 'book' flight.id %}" method="post">
 {% csrf_token %}
 <select name="passenger">
+  {% for passenger in non_passengers %}
+    <option value="{{ passenger.id }}">{{  passenger }}</option>
+  {% endfor %}
+
+<input type="submit">
+
+</select>
 
 </form>
 ```
 
 Here we need to make sure we pass it the method of post and we also need to name the dropdown passenger, the same as what we've used inside of the book function `request.POST["passenger"]` so that the system knows where the name is coming from.
 
-Cont at 1:34:42
+This dropdown will contain all the non_passengers, where we select the id as a value `{{ passenger.id }}` but we display the `{{ (non)passenger name }}` that we're looping over. 
+
+
+**Quick Summary:**
+We have covered a lot in this part so let's break it down as to what has actually been done. 
+
+We have created a dynamic html file inside of our django project that is specific to each flight (by passing in an ID).
+Inside of that page we are showing the flight, the current passengers along with a form that will allow me to add a passenger to the list from a list of non-passengers. 
+
+Once we add a passenger from the non-passenger list we get redirect back to the flight page and the name of the passenger disappears from the dropdown list too!
+
+Technicalities:
+If we look inside of the [form](#adding-non-passengers), we can see that the option value is the `passenger.id` yet we display the Passenger name via the variable we have received from inside of the python code.
+
+### Customizing the Admin Page
+
+Django allows us to customize the view of the Admin page.
+We can have it display the data we want instead of having it display all of the information. There might be less relevant information in there that we might want to hide or information that we might want to be able to view.
+
+Read more about customizing the Django Admin page [here](https://docs.djangoproject.com/en/3.0/ref/contrib/admin/)
+
+If we want to adjust what we want it to display, we can create a new class inside of the `admin.py` file, the same file where we have registered all our views, such as passengers, airport and flight etc. 
+
+```
+class FlightAdmin(admin.ModelAdmin):
+  list_display = ('id', 'origin', 'destination', 'duration')
+
+admin.site.register(Flight, FlightAdmin)
+```
+The code above is broken down as follows. First we create a subclass of ModelAdmin (that's why it is an argument inside of the class). 
+
+We then create the view we want by amending the list_display.
+
+Once done, we have to also add the FlightAdmin Class to the part where we register the FLight in order for us to "override" the default view. 
+
+### User Login System
+
+#### Login
+
+1. create a the way we always always would:
+`python manage.py startapp users`
+2. Add the app to installed apps
+3. Include the path to the `urls.py` inside of the project
+4. Create `urls.py` file inside of the app
+5. Create views inside of `views.py`
+
+For our login system we can create 3 views
+
+First, let's create the index view that we usually create.
+We will also have to create a login_view and a logout_view function (naming them "login" and "logout" respectively. )
+```
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.urls import reverse
+
+# Importing authentication functions (provided by Django)
+from django.contrib.auth import authenticate, login, logout
+
+def index(request):
+  if not request.user.is_authenticated:
+    return HttpResponseRedirect(reverse('login'))
+  return render(request, 'users/user.html') 
+  # If the user was logged in successfully!
+
+def login_view(request):
+  if request.method == 'POST':
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+      login(request, user)
+      return HttpResponseRedirect(reverse('index'))
+    else:
+      return render(request, 'users/login.html', {
+        'message':'Invalid credentials'
+      })
+  return render('users/login.html')
+```
+
+Inside of the index function, we have created a redirect to the login view, if the user is not authenticated, meaning that if he's not signed in then the function will automatically redirect him to the login page. The `request.user.is_authenticated` part is already baked into Django. 
+
+We need to create a form inside of the `login.html` file but we have to make sure that the data gets passed in via the POST method as the GET method shows the parameters inside of the URL. Important for when doing a login system! 
+
+`username = request.POST['username']` This line, same as before, means that the username will be provided via a field called 'username' inside of the POST field. 
+
+Django also provides us with functions that allow us to authenticate a user, log the user in and log the user out. They're imported separately via the `from django.contrib.auth import authenticate, login, logout`
+`user = authenticate(request, username=username, password=password)` This line will check against the entered username and password in the submit form and if they can be authenticated against the users who are already inside of the admin database, we get back the user. 
+
+Logging a user is done via a built in Django function with a conditional to check if the user does exist (if user is not None). This will log the user in and then return them back the user page. 
+```
+if user is not None:
+    login(request, user)
+    return HttpResponseRedirect(reverse('index'))
+```
+
+If the user is not a current user we can then display a message that says that the user was not authenticated:
+```
+else: 
+    return render(request, 'users/login.html', {
+        'message':'Invalid credentials'
+}
+```
+
+Because we've passed down a message inside of the else statement, we can display that message now on our login page to let the user know that they haven't been logged in.
+
+Once the user has successfully been able to log in, we can display all their relevant information inside of the html file. We can do this because we have access to the request variable. 
+So we have access to things such as:
+- request.user.username
+- request.user.first_name
+- request.user.email
+
+#### Logout
+
+Just as there is a login function, Django also provides a logout function.
+We can create this quite simply and we just need to redirect the user back to a specific page once they've logged out successfully. 
+
+```
+def logout_view(request):
+  logout(request):
+  return render(request, 'users/login.html, {
+    'message': 'Logged Out'
+  })
+```
+
+Finally, we need to add a link to the logout route inside of the html file. 
+`<a href="{% url 'logout' %}">Log Out</a>`
+This will point the link to the logout function inside of our views.py file for that particular app!
