@@ -1,4 +1,3 @@
-# Lecture5 - SQL
 
 - [Lecture5 - SQL](#lecture5---sql)
   - [Introduction](#introduction)
@@ -42,16 +41,17 @@
       - [Login](#login)
       - [Logout](#logout)
 
-## Introduction
+# Lecture5 - SQL
 
-Python Classes are referred ti as Models in SQL!
+## Introduction
+Python Classes are referred to as Models in SQL!
 Migrations are techniques that allow us to make changes to the underlying database! 
 
 ### Data
 A relational database will have rows and columns.  
 
 SQLite is the Django default! 
-Each database can store its own type depending on its use. 
+Each database can store its own [type](#sqlite-types) depending on its use. 
 
 ### SQLite Types:
 - Text
@@ -79,14 +79,14 @@ Each database can store its own type depending on its use.
 ### SQL Commands
 Let's have a look at how we would represent this table in SQLite
 
-|origin   |destination|duration|
-|---------|-----------|--------|
-|New York |London     |415     |
-|New York |Paris      |450     |
-|London   |Dubai      |500     |
-|Vienna   |Warsaw     |120     | 
+|origin|destination|duration|
+|------|-----------|--------|
+|New York|London|415|
+|New York|Paris|450|
+|London|Dubai|500|
+|Vienna|Warsaw|120| 
 
-Here is how you would create a SQLite table:
+Here is how you would create a SQLite table (Our example is concerned with Flights)
 ```
 CREATE TABLE flights(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -100,23 +100,25 @@ They are all the names of the columns.
 It is often good practice to assign id's that are not unique to each item as there might be multiple entries that are the same. In our case, there might be multiple airlines who are flying from New York to London and it is important to be able to distinguish between them when querying the database. SQL will usually handle the id part automatically and add that itself so we don't have to. 
 
 **INTEGER, TEXT**  
-They are types. This is what was discussed [above](#sqlite-types). That way the db knows what kind type it is storing. 
+They are types. This is what was discussed [above](#sqlite-types). That way the db knows what type it is storing. It could be an integer or a piece of text.
 
 **PRIMARY, NOT NULL**  
-They are constraints that we might add to the columns. So **Autoincrement** will increase the value automatically with each new item stored. 
+They are constraints that we might add to each item. For example **Autoincrement** will increase the value automatically with each new item stored.
 **Not Null** means that the value can't be blank. 
 
 ## SQL Databases
 
 ### Creating a database
 
-We can just use a simple command in order to create a database by typing in a particular command into our commandline:
+We can just use a simple command in order to create a database by typing in a particular command into our command line:
+
 `touch filename.sql` => This will create a new database file
+
 To enter a sqlite3 prompt, in order to manipulate the database, we type the following:
 `sqlite3 filename.sql` => This command will open a new prompt for us to access the sqlite database.
 Once inside of here, we can create the database with the commands that we looked at [here](#sql-commands) 
 
-NOTE:
+**NOTE:**
 We can query a database by using Regular Expressions if we're unsure of a certain line. 
 So we can do:
 `SELECT * FROM flights WHERE origin LIKE "%a%";`
@@ -144,7 +146,6 @@ To get a specific row we can use:
 This will return the id with the row number 3. 
 
 ### Updating the database
-
 This is how you update a database:
 ```
 UPDATE flights
@@ -155,32 +156,32 @@ UPDATE flights
 
 This command updates the flight time in our database between New York and London. 
 In plain english it looks as follow:
-SQLite, **UPDATE** the *flights* table and **SET** a *duration* of *430*, **WHERE** the *origin* is *New York* **AND** the *destination* is *London*. 
+SQLite:
+**UPDATE** the *flights* table and **SET** a *duration* of *430*, **WHERE** the *origin* is *New York* **AND** the *destination* is *London*. 
 
 ### Deleting items in Database
 
 The command to delete items in the database is:
 `DELETE FROM flights WHERE destination="Tokyo";`
-This command will **DELETE** all the inputs in *flights* table **WHERE** the *destinations* is *Tokyo*.
+**DELETE** all the inputs in *flights* table **WHERE** the *destinations* is *Tokyo*.
 
 ### Foreign Keys
-
 A foreign key is a reference to another table. We can use those to reference a particular data item from another table!
 
-Once datasets become larger and larger we might want to separate out data into multiple columns and sets. We can then reference these amongst each other. 
+Once datasets become larger and larger we might want to separate out the data into multiple columns and sets. We can then reference these amongst each other. That way we don't have to hard code the data into tables. 
 
 Looking at the flights data in particular, we could separate out the airports themselves into a unique table.
 
-|id|code|city    |
-|--|----|--------|
+|id|code|city|
+|--|----|----|
 |1 |JFK |New York|   
 |2 |PVG |Shanghai|
 |3 |IST |Istanbul|   
-|4 |LHR |London  |   
-|5 |SVO |Moscow  |   
-|6 |LIM |Lima    |   
-|7 |CDG |Paris   |   
-|8 |NRT |Tokyo   |
+|4 |LHR |London|   
+|5 |SVO |Moscow|   
+|6 |LIM |Lima|   
+|7 |CDG |Paris|   
+|8 |NRT |Tokyo|
 
 We can change this table and replace it with a table that has foreign keys.
 It would look like this:
@@ -192,10 +193,9 @@ It would look like this:
 |3|4|9|500|
 |4|6|5|120| 
 
-Once we create separate tables where we associate unique id's to individual items we can then create associated tables where we reference items from one table and associate them to another table, without hardcoding any values into them. 
+Once we create separate tables where we associate unique ids to individual items we can then create associated tables where we reference items from one table and associate them to another table, without hardcoding any values into them. 
 
 ### Joining Databases
-
 SQL allows us to join multiple queries together in order to be able to see data. If we're only using unique ID's then it's difficult to see the data properly and it doesn't make things immediately obvious. 
 Such a **JOIN** query could look like this
 ```
@@ -203,11 +203,12 @@ SELECT first, origin, destination
     FROM flights JOIN passengers
     ON passengers.flight_id = flights.id
 ```
-SELECT tells sql what data we need
-FROM tells sql what table to use
-JOIN tells sql what table want to join it with (passengers in this case)
-ON tells sql how the two tables are related to each other
-So we're telling sql that the flight_id for each passenger is related to the flights.id
+**SELECT** tells sql what data we need (first, origin and destination)
+**FROM** tells sql what table to use
+**JOIN** tells sql what table want to join it with (passengers in this case)
+**ON** tells sql how the two tables are related to each other. 
+
+So we're telling sql that the *flight_id* for each passenger is related to the *flights.id* (Note: flight_id and flights.id)
 *passenger.flight_id* = the flight the passenger is on
 *flights.id* = a particular flight (has an origin and a destination)
 
@@ -230,19 +231,19 @@ This is what the final table would look like
 - FULL OUTER JOIN
 
 ### CREATE INDEX
-We can create an index of all the data which makes querying the data much easier in the long run but it requires additional memory and maintenance.
+We can also create an index of all the data which makes querying the data much easier in the long run but it requires additional memory and maintenance.
 Think of an index like the index in a book. You can go to the back and look for a word and it will tell you the location of it inside of the book. 
 ```
 CREATE INDEX name_index ON passengers (last);
 ```
 
 ### SQL Injection
-SQL Injections are a security vulnerability where a hacker might gain access to a 
-database. 
+SQL Injections are a security vulnerability where a hacker might gain access to a database. 
 
 Making comments in sql is done via --. A hacker could potentially try and log in to the database and trick the system by writing a specific username containing --. This would allow you to bypass the password check.
 A normal query looks like this
 `SELECT * FROM users WHERE username="username" AND password = "password";`
+
 If a hacker adds the -- lines then they might bypass the Password check and log in as the password check is effectively "commented out".
 `SELECT * FROM users WHERE username="hacker" --" AND password = "";`
 Everything from after the -- is effectively commented out!
@@ -251,7 +252,7 @@ Using Django allows us to write sql syntax but without having to know and unders
 
 #### Race Condition
 
-A race condition is when multiple checks/threads etc are happening simultaneously. One example would that if two users were trying to see how many likes there are on particular twitter post, for example. 
+A race condition is when multiple checks/threads etc are happening simultaneously. One example would be cthat if two users were trying to see how many likes there are on particular twitter post, for example. 
 
 To avoid these potential problems would be to add a "lock" so that when somebody is working on the database we won't allow anyone else to work on it until the initial person if finished with their work. 
 
