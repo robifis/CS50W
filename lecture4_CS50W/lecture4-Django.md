@@ -1,28 +1,25 @@
 # Lecture 4 - Django
 
+- [Lecture 4 - Django](#lecture-4---django)
+  - [TODO List](#todo-list)
+    - [Creating a new Django project + Initial Setup](#creating-a-new-django-project--initial-setup)
+    - [Creating a new app](#creating-a-new-app)
+    - [Create links inside of the App](#create-links-inside-of-the-app)
+      - [Links](#links)
+      - [Views](#views)
+    - [Variables](#variables)
+      - [Template Inheritance](#template-inheritance)
+      - [Static Files (CSS, etc...)](#static-files-css-etc)
+      - [Urls in Django](#urls-in-django)
+      - [Sessions](#sessions)
+      - [Redirects](#redirects)
+
 Django is very unique in the sense that it will allow us to create a dynamic page with dynamic content.
 The other thing that is unique to Django is that we can create separate "apps" within the main project directory, allowing us to run them almost independently. The great thing is that we can port the whole app into another project if we need to - saving time.
 
 ## TODO List
 
-**How To:**
-
-1. [Creating a new Django project + Initial Setup](#Create_App)
-2. [Creating a new App](#new_app)
-3. [Creating our first View](#create_links)  
-3a. [Links](#links)  
-3b. [Views](#views)
-4. [Variables](#variables)
-
-**Best Practices:**
-
-- [Template Inheritance](#template_inheritance)
-- [Static Files](#static_files)  
-- [Urls in Django](#url_links)  
-- [Sessions](#sessions)
-- [Redirects](#redirect)  
-
-### <a name="Create_App">Creating a new Django project + Initial Setup</a>
+### Creating a new Django project + Initial Setup
 
 We first need to create the django app by running the command `django-admin startproject Project_Name`.
 This will initiate the app and install all the necessary files for us.
@@ -38,7 +35,7 @@ The command `python manage.py runserver` will allow us to start the development 
 **NOTE:**
 This only needs to be done for each new app created! We do not need to do this for every new page we create inside of the app!
 
-### <a name="new_app">Creating a new app</a>
+### Creating a new app
 
 To create a new app, we issue the following command:
 `python manage.py startapp App_Name` => We need to name the app. Things like blog, about, profiles etc...
@@ -61,11 +58,11 @@ The `app_name/` at the beginning must match the name of the app we've jut create
 **NOTE:**
 This only needs to be done for each new app created! We do not need to do this for every new page we create inside of the app!
 
-### <a name="create_links">Create links inside of the App</a>
+### Create links inside of the App
 
 Now that we've set up the project folder we need to create our first view in order to display something to our user when they come to the url.
 
-#### <a name="links">Links</a>
+#### Links
 
 First, we need to create a new file inside of the app folder called `urls.py`. This is important so that our app can link to individual routes within the app.
 The `urls.py` file needs to look as follows:
@@ -90,7 +87,7 @@ This is our first view, which links to the function called index inside of the v
 **index** => is the name of the function.
 **name='index'** makes it easier to link between files later.
 
-#### <a name="views">Views</a>
+#### Views
 
 We also need to create a new view(function) inside of the `views.py` file in the app folder. There is no difference if you create a link first or the view. The names have to match!
 
@@ -113,14 +110,14 @@ We only need to specify any additional folders beyond the `templates` folder in 
 We can create a base template that inherits the html that doesn't change(navbar, head, etc...).
 See [template inheritance](#template_inheritance) to read more.
 
-### <a name="variables">Variables</a>
+### Variables
 
 Any modern website these days needs to be able to display dynamic content with the help of variables.
 In django, variables are passed down via a dictionary.
 
 Example:
 
-```
+```python
 def sampleFunction(request, variable):
     return render(request, 'app_name/sampleFunction.html, {
         'variable': variable
@@ -131,7 +128,7 @@ The "key" of the dictionary is the name of the variable that the HTML file will 
 The value is the value from the python code.
 This allows us to render and pass information to the HTML file from Python.
 
-#### <a name="template_inheritance">Template Inheritance</a>
+#### Template Inheritance
 
 Template inheritance is a best practice when it comes to creating websites in Django.
 We could easily render each HTML file manually but Django allows us to only only render the parts that we need in order to reuse code.
@@ -174,7 +171,7 @@ This block tells django that we only want it to render what's inside of that par
 
 Here is what the `index.html` (for example) home page would look like:
 
-```jinja2
+```html
 {% extends 'base.html' %}
 
 {% block body %}
@@ -187,7 +184,7 @@ All we did was tell Django what file we would like to extend (base.html) and the
 
 We don't have to call it "body" we can call it anything we want. Especially useful if we want different areas with dynamic content.
 
-#### <a name="static_files">Static Files (CSS, etc...)</a>
+#### Static Files (CSS, etc...)
 
 Loading static files is slightly different inside of a Django app when compared to normal html.
 Static files, similar to HTML files are kept inside of the app_name/static/app_name folder.
@@ -197,14 +194,14 @@ It is helpful to create a folder inside of the static folder in order to avoid n
 
 Here is an example of loading `styles.css` from inside of the static folder:
 
-```
+```html
 {% load static %}
 <link rel="stylesheet href="{% static '/app_name/style.css' %}">
 ```
 
 We just need to make sure we specify `static` at the beginning before we link the file!
 
-#### <a name="url_links">Urls in Django</a>
+#### Urls in Django
 
 Django is powerful enough to allow us to create dynamic links to websites within our app. This has many benefits.
 In order to create this we write the following code inside oft he href part:
@@ -218,17 +215,17 @@ names to paths inside of the `urls.py` file inside of the app directory!
 To avoid issues with the url function we can prepend the name with the name we have defined inside of the `urls.py` file
 inside of the app folder: `app_name:index`. This helps Django guide us to the correct url, in case there are other functions with the same name!
 
-#### <a name="sessions">Sessions</a>
+#### Sessions
 
 Sessions in Django allow us to create individual session for individual users. Django already stores a secure key for us so we don't have to worry about the security. It helps with validation too.
 
-#### <a name="redirect">Redirects</a>
+#### Redirects
 
 Django also allows to create redirects and reverse engineer a url. This is particularly useful if we want to direct a user to a specific page after they've either filled out a form or logged in.
 
 Inside of the `views.py` file we need to import the following:
 
-```
+```python
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
